@@ -28,7 +28,7 @@ int main(){
             printf("Case %d: Not possible", j+1);
         }
         else{
-            printf("Case %d: Possible from station %d", j+1, index);
+            printf("Case %d: Possible from station %d", j+1, index+1);
         }
         sum=0;
         mn=INT_MAX;
