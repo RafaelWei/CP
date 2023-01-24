@@ -31,8 +31,14 @@
 *.test
 tests/
 
+# Swap files
+*.swp
+
 in 
+inp
 out
 *.in
 *.out
 **/.DS_Store
+
+
