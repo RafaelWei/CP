@@ -2,13 +2,66 @@
 
 using namespace std;
 
+struct minmaxStack {
+    vector<long long> s, smin{LLONG_MAX}, smax{LLONG_MIN};
+
+    bool empty() {
+        return s.size() == 0;
+    }
+    
+    void push(long long x) 
+    {
+        s.push_back(x);
+        smin.push_back(::min(x,smin.back())); 
+        smax.push_back(::max(x,smax.back()));
+    }
+
+    long long pop()
+    {
+        long long temp = s.back();
+        s.pop_back();
+        smin.pop_back();
+        smax.pop_back();
+        return temp;
+    }
+
+    long long min()
+    {
+        return smin.back();
+    }
+
+    long long max()
+    {
+        return smax.back();
+    }
+};
+
 int n;
 long long k;
-long long arr[100005];
-stack<long long> s1;
-stack<long long> s1Max;
-stack<long long> s1Min;
-stack<long long> s2;
+long long a[100005];
+minmaxStack s1, s2;
+
+void add(long long x) {
+    s2.push(x); 
+}
+
+bool good() {
+    long long lower = min(s1.min(), s2.min());
+    long long higher = max(s1.max(), s2.max());
+
+    return higher - lower <= k;
+}
+
+void remove() {
+    if (s1.empty())
+    {
+        while (!s2.empty())
+        {
+            s1.push(s2.pop());
+        }
+    }
+    s1.pop();
+}
 
 int main()
 {
@@ -16,44 +69,20 @@ int main()
 
     for (int i=0; i<n; i++)
     {
-        cin >> arr[i];
+        cin >> a[i];
     }
 
     long long ans = 0;
-    long long hi =0;
-    long long lo = LONG_MAX;
-
+    int l=0;
     for (int r=0; r<n; r++)
     {
-        s2.push(arr[r]);
-        hi = max(hi, arr[r]);
-        lo = min(lo, arr[r]);
-
-        if (s1.empty()) {
-            while(!s2.empty()) {
-                long long temp = s2.top();
-                s2.pop();
-                s1.push(temp);
-                if (s1Max.empty() || s1Max.top() < temp) s1Max.push(temp);
-                if (s1Min.empty() || s1Min.top() < temp) s1Min.push(temp);
-            }
-            hi=0;
-            lo=LONG_MAX;
-        }       
-
-        long long curr_max = max(hi, s1Max.top());
-        long long curr_min = min(lo, s1Min.top());
-
-        while (curr_max - curr_min > k)
+        add(a[r]);
+        while(!good())
         {
-            s1.pop();
-            s1Max.pop();
-            s1Min.pop();
-            curr_max = max(hi, s1Max.top());
-            curr_min = min(lo, s1Min.top());
+            remove();
+            l++;
         }
-            
-        ans += s1.size() + s2.size();
+        ans += r-l+1;
     }
     
     cout << ans << "\n";
